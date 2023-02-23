@@ -6,7 +6,8 @@ const globalStore = {
     namespaced: true,
     state: {
         ssiAPIKey: 'c8630a89fcf196df19bf2b76cea0f.f54d187140afb86dbcab1f8d0775da90185b179f668d70222253d7192c2330c854800584e258bd68f56da971661f3c480',
-        ssiAppAccessTokenKey: 'ssiAppAccessTokenKey',        
+        ssiAppAccessTokenKey: 'ssiAppAccessTokenKey',  
+        subjectDID: "",      
     },
     getters: {
         getSSIAppAccessToken: (state) => localStorage.getItem(state.ssiAppAccessTokenKey),
@@ -18,7 +19,8 @@ const globalStore = {
         }
     },
     mutations: {
-        setSsiAppAccessToken: (state, payload) => localStorage.setItem(state.ssiAppAccessTokenKey, payload)       
+        setSsiAppAccessToken: (state, payload) => localStorage.setItem(state.ssiAppAccessTokenKey, payload),
+        setSubjectDID: (state, payload) => state.subjectDID = payload
     },
     actions: {
         authenticateSSIAppAction: ({state, commit}) => {

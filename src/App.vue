@@ -83,10 +83,10 @@
                       completed: false
                   },
                   {
-                      icon: 'report_problem',
+                      icon: 'file_upload',
                       name: 'second',
-                      title: 'Sample title 2',
-                      subtitle: 'Subtitle sample',
+                      title: 'PDF Uploading',
+                      subtitle: 'Upload your PDF document',
                       component: StepTwo,
                       completed: false
                   },

@@ -26,27 +26,26 @@
             <div class="control">
                 <button class="btn btn-primary" @click="createNewDID()">Create New Id</button>
             </div>
-            <p v-if="$v.form.demoEmail.$error" class="help is-danger">This email is invalid</p>
         </div>
 
         <div class="field">
             <label class="label">Your DID</label>
             <div class="control">
                 <input 
-                :class="['input', ($v.form.demoEmail.$error) ? 'is-danger' : '']"  
+                :class="['input', ($v.form.did.$error) ? 'is-danger' : '']"  
                 type="text" placeholder="did:hid:testnet:123123" 
                 v-model="form.did" 
                 disabled>
             </div>
-            <!-- <p v-if="$v.form.demoEmail.$error" class="help is-danger">This email is invalid</p> -->
+            <p v-if="$v.form.did.$error" class="help is-danger">Please create your identity first</p>
         </div>
     </div>
 </template>
 
 <script>
     import {validationMixin} from 'vuelidate'
-    import {required, email} from 'vuelidate/lib/validators'
-    import { mapGetters  } from 'vuex';
+    import {required} from 'vuelidate/lib/validators'
+    import { mapGetters, mapMutations  } from 'vuex';
   import eventBus from "./eventBus";
 
     const ssi_api_host = 'https://api.entity.hypersign.id/api/v1';
@@ -56,23 +55,13 @@
         data() {
             return {
                 form: {
-                    username: '',
-                    demoEmail: '',
-                    message: '',
                     did:""
                 }
             }
         },
         validations: {
             form: {
-                username: {
-                    required
-                },
-                demoEmail: {
-                    required,
-                    email
-                },
-                message: {
+                did: {
                     required
                 }
             }
@@ -109,6 +98,7 @@
             }
         },
         methods: {
+            ...mapMutations("globalStore", ['setSubjectDID']),
             async createNewDID() {
                 try{
                     // create a new did Doc
@@ -129,6 +119,7 @@
                     }
                     const { did } = createDIDJson;
                     this.form.did = did;
+                    this.setSubjectDID(this.form.did)
                     // register a new did doc
                 }catch(e){
                     console.error(e.message);
