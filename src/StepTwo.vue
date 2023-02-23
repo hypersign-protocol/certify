@@ -1,5 +1,22 @@
 <template>
-    <div class="card" style="margin: 3rem">
+    <div style="padding: 2rem 3rem; text-align: left;">
+        <div class="card" style="margin: 3rem">
+            <p class="card-header-title">
+                Type your signature
+            </p>
+            <div style="border: 5px solid #8080804f; margin: 20px; border-radius: 10px;">
+                <VPerfectSignature :stroke-options="strokeOptions" ref="signaturePad" />
+            </div>
+            <div class="card-footer">
+                <a class="card-footer-item" @click="canContinue">Download</a>
+                <a class="card-footer-item">Save</a>
+                <a class="card-footer-item">Clear</a>
+            </div>    
+        </div>
+           
+        
+    </div>
+    <!-- <div class="card" style="margin: 3rem">
         <header class="card-header">
             <p class="card-header-title">
                 Component
@@ -23,13 +40,29 @@
             <a class="card-footer-item">Edit</a>
             <a class="card-footer-item" @click="canContinue">Can Continue</a>
         </footer>
-    </div>
+    </div> -->
 </template>
 
 <script>
+import VPerfectSignature from 'v-perfect-signature'
     export default {
         props: ['currentStep'],
+        components: {VPerfectSignature},
+        data(){
+            return {
+                strokeOptions: {
+                    size: 10,
+                    thinning: 0.75,
+                    smoothing: 0.5,
+                    streamline: 0.5,
+                },
+            }
+        },
         methods: {
+            toDataURL() {
+                const dataURL = this.$refs.signaturePad.toDataURL()
+                console.log(dataURL)
+            },
           canContinue() {
               this.$emit('can-continue', {value: true});
           }

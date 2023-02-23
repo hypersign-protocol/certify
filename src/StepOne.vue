@@ -45,7 +45,7 @@
 <script>
     import {validationMixin} from 'vuelidate'
     import {required} from 'vuelidate/lib/validators'
-    import { mapGetters, mapMutations  } from 'vuex';
+    import { mapState, mapGetters, mapMutations  } from 'vuex';
   import eventBus from "./eventBus";
 
     const ssi_api_host = 'https://api.entity.hypersign.id/api/v1';
@@ -68,6 +68,7 @@
         },
         computed: {
             ...mapGetters("globalStore", ["getSSIHeaders","getSSIAppAccessToken"]),
+            ...mapState("globalStore", ["subjectDID"])
         },  
         watch: {
             $v: {
