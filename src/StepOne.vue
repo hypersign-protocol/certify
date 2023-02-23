@@ -53,7 +53,10 @@
         props: ['clickedNext', 'currentStep'],
         mixins: [validationMixin],
         data() {
+            
+
             return {
+
                 form: {
                     did:""
                 }

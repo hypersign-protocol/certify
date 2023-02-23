@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Vue from 'vue';
 import Vuex from 'vuex';
 Vue.use(Vuex)
@@ -7,7 +8,9 @@ const globalStore = {
     state: {
         ssiAPIKey: 'c8630a89fcf196df19bf2b76cea0f.f54d187140afb86dbcab1f8d0775da90185b179f668d70222253d7192c2330c854800584e258bd68f56da971661f3c480',
         ssiAppAccessTokenKey: 'ssiAppAccessTokenKey',  
-        subjectDID: "",      
+        subjectDID: "",
+        pdfDocument:null,
+        signature:null,   
     },
     getters: {
         getSSIAppAccessToken: (state) => localStorage.getItem(state.ssiAppAccessTokenKey),
@@ -16,11 +19,19 @@ const globalStore = {
                 'Authorization': 'Bearer ' + getters.getSSIAppAccessToken,
                 'Content-Type': 'application/json'
             }
+        },
+        getPDFDoc:(state, getters)=>{
+            return state.pdfDocument
+        },
+        getSignature:(state, getters)=>{
+            return state.signature
         }
     },
     mutations: {
+        setSignature:(state, payload)=>state.signature=payload,
         setSsiAppAccessToken: (state, payload) => localStorage.setItem(state.ssiAppAccessTokenKey, payload),
-        setSubjectDID: (state, payload) => state.subjectDID = payload
+        setSubjectDID: (state, payload) => state.subjectDID = payload,
+        setPDFDoc: (state, payload) => state.pdfDocument=payload 
     },
     actions: {
         authenticateSSIAppAction: ({state, commit}) => {
