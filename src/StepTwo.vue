@@ -2,7 +2,6 @@
     <div style="padding: 2rem 3rem; text-align: left;">
         <div class="card" style="margin: 3rem">
             <input type="file" accept="application/pdf" class="fileinput" @change="onChange">
-
         </div>
 
 
@@ -78,8 +77,8 @@ export default {
             canvas: null,
             fabricCanvas: null,
             hide: true,
-            page: null
-
+            page: null,
+            Base64Prefix : "data:application/pdf;base64,"
         }
     },
     computed: {
@@ -88,8 +87,8 @@ export default {
     },
     mounted() {
         this.canvas = new fabric.Canvas('myCanvas', {
-            preserveObjectStacking: true
-
+            preserveObjectStacking: true,
+            isDrawingMode:  true,
         })
         console.log(this.$refs);
         window.addEventListener('resize', this.onWindowResize)
@@ -112,61 +111,72 @@ export default {
 
         ...mapMutations("globalStore", ['setPDFDoc']),
 
-        render() {
-
-
-            this.pdf.getPage(this.currentPage).then((page) => {
-                this.page=page
-                const canvas = this.canvas
-                canvas.setDimensions({ width: page.view[2], height: page.view[3] });
-
-                canvas.width = 50 * window.innerWidth / 100
-                canvas.height = 100 * window.innerHeight / 100
-                const viewport = page.getViewport({ scale: 1 })
-                const scale = Math.min(canvas.width / viewport.width, canvas.height / viewport.height)
-                const scaledViewport = page.getViewport({ scale: scale })
-
-                canvas.width = scaledViewport.width;
-                canvas.height = scaledViewport.height;
-
-
-                canvas.setDimensions({
-                    width: scaledViewport.width,
-                    height: scaledViewport.height
-                });
-
-                const renderContext = {
-                    canvasContext: canvas.getContext('2d'),
-                    viewport: page.getViewport({ scale: scale })
-                };
-                page.render(renderContext).promise.then( ()=>{  
-                })
+        render(pdf, pageNumber) {
+            return pdf.getPage(pageNumber).then((page) => {
+                            //  retina scaling
+                            const viewport = page.getViewport({ scale: window.devicePixelRatio });
+                            // Prepare canvas using PDF page dimensions
+                            const canvas = document.createElement('canvas');
+                            const context = canvas.getContext('2d');
+                            
+                            canvas.height = viewport.height
+                            canvas.width = viewport.width;
+                            // Render PDF page into canvas context
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport
+                            };
+                            const renderTask = page.render(renderContext);
+                            return renderTask.promise.then(() => canvas);
                 
             })
-        }
-        ,
-        onChange(e) {
+        },
+         getPdfHandler() {
+            return window['pdfjs-dist/build/pdf'];
+        },
+        readBlob(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.addEventListener('load', () => resolve(reader.result));
+                reader.addEventListener('error', reject)
+                reader.readAsDataURL(blob);
+            })
+        },
+        async onChange(e) {
+            let  pdfData = e.target.files[0];
 
-            if (!e.target.files.length) return;
-            let file = e.target.files[0];
-            let reader = new FileReader();
-            reader.readAsArrayBuffer(file);
-            reader.onload = async e => {
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'node_modules/pdfjs-dist/build/pdf.worker.min.js'
-                let src = e.target.result;
-                this.pdfDoc = src
-                let loadingTask = pdfjsLib.getDocument({ data: src })
-                loadingTask.promise.then((pdf) => {
+            
+            pdfData = pdfData instanceof Blob ? await this.readBlob(pdfData) : pdfData;
+            const data = atob(pdfData.startsWith(this.Base64Prefix) ? pdfData.substring(this.Base64Prefix.length) : pdfData);
+
+            // const pdfjsLib = await this.getPdfHandler();
+            let loadingTask = pdfjsLib.getDocument({ data })
+                loadingTask.promise.then(async (pdf) => {
                     this.pdf = pdf
                     this.totalPages = pdf.numPages
-                    this.currentPage = 1
-                    this.render()
+                    this.currentPage = 1;
+                    const renderedPage = await this.render(pdf, this.currentPage);
+                    const scale = 1 / window.devicePixelRatio;
+                    this.canvas.add(new fabric.Image(await renderedPage, {
+                        scaleX: scale,
+                        scaleY: scale,
+                    }));
+                    // pdf.getPage(1).then(function(page) {
+                        
+                    // });
+            })
 
-                    this.$emit('can-continue', { value: true });
+            // if (!e.target.files.length) return;
+            // let file = e.target.files[0];
+            // let reader = new FileReader();
+            // reader.readAsArrayBuffer(file);
+            // reader.onload = async (e) => {
+            //     // pdfjsLib.GlobalWorkerOptions.workerSrc = 'node_modules/pdfjs-dist/build/pdf.worker.min.js'
+            //     // let src = e.target.result;
+            //     // this.pdfDoc = src
+                
 
-                })
-
-            }
+            // }
 
 
 
