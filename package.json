@@ -10,6 +10,7 @@
   "dependencies": {
     "bootstrap-vue": "^2.23.1",
     "core-js": "^3.8.3",
+    "fabric": "^5.3.0",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^3.4.118",
     "v-perfect-signature": "^1.1.11",
