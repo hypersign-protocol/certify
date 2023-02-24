@@ -140,7 +140,6 @@ export default {
                     viewport: page.getViewport({ scale: scale })
                 };
                 page.render(renderContext).promise.then( ()=>{  
-                    this.canvas.setBackgroundImage(new fabric.Image(),canvas.renderAll.bind(canvas))
                 })
                 
             })
@@ -153,7 +152,7 @@ export default {
             let reader = new FileReader();
             reader.readAsArrayBuffer(file);
             reader.onload = async e => {
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'node_modules/pdfjs-dist/build/pdf.worker.js'
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'node_modules/pdfjs-dist/build/pdf.worker.min.js'
                 let src = e.target.result;
                 this.pdfDoc = src
                 let loadingTask = pdfjsLib.getDocument({ data: src })
