@@ -1,20 +1,8 @@
 <template>
     <div style="padding: 2rem 3rem; text-align: left;">
-        <div class="card" style="margin: 3rem">
-            <p class="card-header-title">
-                Type your signature
-            </p>
-            <div style="border: 5px solid #8080804f; margin: 20px; border-radius: 10px;">
-                <VPerfectSignature :stroke-options="strokeOptions" ref="signaturePad" />
-            </div>
-            <div class="card-footer">
-                <a class="card-footer-item" @click="canContinue">Download</a>
-                <a class="card-footer-item">Save</a>
-                <a class="card-footer-item" @click="clear">Clear</a>
-            </div>    
-        </div>
-           
-        
+
+        <button @click="generateCredential">Sign Contract</button>
+
     </div>
     <!-- <div class="card" style="margin: 3rem">
         <header class="card-header">
@@ -44,48 +32,87 @@
 </template>
 
 <script>
-import VPerfectSignature from 'v-perfect-signature'
-import {  mapGetters, mapMutations ,mapState } from 'vuex';
+import { mapGetters, mapMutations, mapState,mapActions } from 'vuex';
+import { PDFDocument } from 'pdf-lib';
+export default {
+    props: ['currentStep'],
+    components: {},
+    data() {
+        return {
+            credential: {
+                schemaContext: ["https://schema.org"],
+                type: ["DigitalDocument"],
 
-    export default {
-        props: ['currentStep'],
-        components: {VPerfectSignature},
-        data(){
-            return {
-                strokeOptions: {
-                    size: 5,
-                    thinning: 0.75,
-                    smoothing: 0.5,
-                    streamline: 0.5,
+                subjectDid: "did:hid:testnet:zFvWaeG6JCiaDRZv2bbhqnzGTeZ89VtVHC5ZtnHMycUGe",
+                issuerDid: "did:hid:testnet:zFvWaeG6JCiaDRZv2bbhqnzGTeZ89VtVHC5ZtnHMycUGe",
+                expirationDate: "2027-12-10T18:30:00.000Z",
+                fields: {
+                    name: "Contract",
+                    description: "Signed Document by hypersign-certify",
+                    author: {
+                        "@type": "Issuer",
+                        "name": "Certify"
+                    },
+                    datePublished: "2023-02-22T00:00:00Z",
+                    dateModified: "2023-02-22T00:00:00Z",
+                    encodingFormat: "application/pdf",
+                    fileSize: null,
+                    contentUrl: null,
                 },
-            
-            }
-        },
-        computed:{
-            ...mapGetters("globalStore", ["getPDFDoc","getSignature"]),
-            ...mapState("globalStore", ["signature"])
-
-        },
-        methods: {
-            ...mapMutations("globalStore",["setSignature"]),
-
-            clear(){
-                this.$refs.signaturePad?.clear()
+                namespace: "testnet",
+                verificationMethodId: "did:hid:testnet:zFvWaeG6JCiaDRZv2bbhqnzGTeZ89VtVHC5ZtnHMycUGe#key-1",
+                persist: false
             },
-            toDataURL() {
-                const dataURL = this.$refs.signaturePad.toDataURL()
-                console.log(dataURL);
-                fetch(dataURL)
-                .then(res=>res.arrayBuffer())
-                .then(         buff=>       this.setSignature(buff))
-            },
-          canContinue() {
-            this.toDataURL()
-              this.$emit('can-continue', {value: true});
-          }
-        },
-        mounted() {
-//            this.$emit('can-continue', {value: true})
+            accessToken:null,
         }
+    },
+    computed: {
+        ...mapGetters("globalStore", ["getPDFDoc","getSubjectDID"]),
+        ...mapState("globalStore", ["signature"])
+
+    },
+    mounted() {
+        this.accessToken=localStorage.getItem('ssiAppAccessTokenKey')
+    },
+    methods: {
+        ...mapMutations("globalStore", ["setSignature"]),
+        ...mapActions("globalStore", ["issueCredential"]),
+
+        async generateCredential() {
+
+
+            const pdfDoc = this.getPDFDoc
+            const pdfBytes = pdfDoc.pdfDoc
+            const signature = pdfDoc.signature
+            const pageNum = pdfDoc.pageNum
+            const pdfDocument = await PDFDocument.load(pdfBytes)
+            pdfDocument.removePage(pageNum - 1)
+            const pngImage = await pdfDocument.embedPng(signature)
+            const { width, height } = pngImage.scale(.77);
+
+            const newPage = pdfDocument.insertPage(pageNum - 1)
+            newPage.drawImage(pngImage, {
+                x: 0,
+                y: 0,
+                width,
+                height
+            })
+
+            const pdfBytesDownload = await pdfDocument.saveAsBase64({ dataUri: true })
+            this.credential.fields.fileSize=atob(pdfBytesDownload.split(',')[1]).length *1e-6 +"Mb"
+
+            this.credential.fields.contentUrl=pdfBytesDownload
+            this.credential.expirationDate=new Date('12-25-2030').toISOString()
+            this.credential.fields.datePublished=new Date().toISOString()
+            this.credential.fields.dateModified=null
+            this.credential.issuerDid='did:hid:testnet:zF9hdCSFgp8cc6Q42e46A3yjHodpZeUTSWNQrMVFekWfB'
+            this.credential.verificationMethodId="did:hid:testnet:zF9hdCSFgp8cc6Q42e46A3yjHodpZeUTSWNQrMVFekWfB#key-1"
+            this.credential.subjectDid=this.getSubjectDID
+           const credential= this.issueCredential(this.credential)
+            console.log(credential);
+        }
+
+
     }
+}
 </script>

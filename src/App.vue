@@ -57,6 +57,7 @@ import StepTwo from './StepTwo.vue';
 
 import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 import eventBus from "./eventBus";
+import { PDFDocument } from 'pdf-lib'
 const teamUrl = 'https://hypersign.id';
 const repoUrl = 'https://github.com/PygmySlowLoris/vue-stepper';
 export default {
@@ -135,33 +136,35 @@ export default {
         async alert() {
 
             const pdfDoc = this.getPDFDoc
-            const signatureData = this.getSignature
-            const pages = pdfDoc.getPages()
-            const totalPages = pages.length
-            const page = pdfDoc.getPage(totalPages - 2)
-            pdfDoc.removePage(totalPages-1)
-            const pngImage = await pdfDoc.embedPng(signatureData)
-            const pngDims = pngImage.scale(0.5)
+            const pdfBytes = pdfDoc.pdfDoc
+            const signature = pdfDoc.signature
+            const pageNum = pdfDoc.pageNum
+            const pdfDocument = await PDFDocument.load(pdfBytes)
+            pdfDocument.removePage(pageNum-1)
+            const pngImage = await pdfDocument.embedPng(signature)
+            const { width, height } = pngImage.scale(.77);
 
-            page.drawImage(pngImage, {
-                x: page.getWidth() / 2 - pngDims.width / 2 + 75,
-                y: page.getHeight() / 2 - pngDims.height,
-                width: pngDims.width,
-                height: pngDims.height,
+            const newPage = pdfDocument.insertPage(pageNum-1)
+            newPage.drawImage(pngImage, {
+                x: 0,
+                y: 0,
+                width,
+                height
             })
-            const pdfBytes = await pdfDoc.saveAsBase64({dataUri:true})
 
-            this.downloadURI(pdfBytes,"download.pdf")
-            
+            const pdfBytesDownload = await pdfDocument.saveAsBase64({ dataUri: true })
+
+            this.downloadURI(pdfBytesDownload, "download.pdf")
+
         },
-         downloadURI(uri, name) {
-  const link = document.createElement("a");
-  link.download = name;
-  link.href = uri;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
+        downloadURI(uri, name) {
+            const link = document.createElement("a");
+            link.download = name;
+            link.href = uri;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     }
 }
 </script>
@@ -239,4 +242,5 @@ i.top-left {
 
 .vertical-separator .line {
     border-right: 1px solid #cccccc;
-}</style>
+}
+</style>
