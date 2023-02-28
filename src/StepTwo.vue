@@ -48,7 +48,7 @@
 
 // import { PDFDocument } from 'pdf-lib'
 import VPerfectSignature from 'v-perfect-signature'
-
+// import {ref} from 'vue';
 import { mapState, mapMutations } from 'vuex';
 // import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import * as pdfjsLib from 'pdfjs-dist/webpack';
@@ -73,7 +73,7 @@ export default {
             hide: false,
             loaded: false,
             pdf: null,
-            pdfDoc: null,
+            pdfDoc: [],
             pdfData: null,
             pages: [],
             sig: {},
@@ -194,7 +194,7 @@ export default {
         },
         render() {
 
-            let loadingTask = pdfjsLib.getDocument({ data: this.pdfDoc })
+            let loadingTask = pdfjsLib.getDocument( this.pdfDoc )
             loadingTask.promise.then((pdf) => {
                 if (this.pdf) {
                     this.pdf.destroy()
@@ -230,6 +230,7 @@ export default {
                         canvasContext: canvas.getContext('2d'),
                         viewport: page.getViewport({ scale: scale })
                     };
+                   
                     page.render(renderContext).promise.then(() => {
                         // let bg = canvas.toDataURL("image/png");
                         // console.log(bg);
@@ -262,11 +263,12 @@ export default {
         }
         ,
         onChange(e) {
-
+            
+            
             if (!e.target.files.length) return;
             let file = e.target.files[0];
             let reader = new FileReader();
-            reader.readAsArrayBuffer(file);
+            reader.readAsDataURL(file);
             reader.onload = async e => {
                 pdfjsLib.GlobalWorkerOptions.workerSrc = 'node_modules/pdfjs-dist/build/pdf.worker.min.js'
                 let src = e.target.result;
@@ -300,7 +302,7 @@ export default {
         nextPage() {
             this.currentPage += 1
             this.currentPage = this.currentPage > this.totalPages ? 1 : this.currentPage
-            this.render()
+         this.render()
 
         },
         previousPage() {

@@ -206,6 +206,7 @@ export default {
             const pdfBytes = pdfDoc.pdfDoc
             const signature = pdfDoc.signature
             const pageNum = pdfDoc.pageNum
+            console.log(pdfBytes);
             const pdfDocument = await PDFDocument.load(pdfBytes)
             pdfDocument.removePage(pageNum - 1)
             const pngImage = await pdfDocument.embedPng(signature)
