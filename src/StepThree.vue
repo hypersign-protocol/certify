@@ -223,7 +223,7 @@ export default {
             this.credential.fields.fileSize = atob(pdfBytesDownload.split(',')[1]).length * 1e-6 + "Mb"
 
             this.credential.fields.contentUrl = pdfBytesDownload
-            this.credential.expirationDate = new Date('12-25-2030').toISOString()
+            this.credential.expirationDate = new Date('12/25/2030').toISOString()
             this.credential.fields.datePublished = new Date().toISOString()
             this.credential.fields.dateModified = null
             this.credential.issuerDid = 'did:hid:testnet:zF9hdCSFgp8cc6Q42e46A3yjHodpZeUTSWNQrMVFekWfB'
