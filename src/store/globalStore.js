@@ -60,6 +60,38 @@ const globalStore = {
                 })
             })
         },
+        verifyCredential(context, payload) {
+            return new Promise((resolve, reject) => {
+                const headers = context.getters.getSSIHeaders
+                const url = `${ssi_api_host}/credential/verify`
+                fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(payload)
+                }).then(resp => {
+                    console.log(resp);
+                    if (resp.statusCode == 400) {
+                        reject('Bad Request')
+                    }
+                    if (resp.statusCode == 401) {
+                        reject('Invalid Access Token')
+                    }
+                    if (resp.statusCode == 500) {
+                        reject(resp.message)
+                    }
+                    if (resp.status == 500) {
+                        reject(resp.message)
+                    }
+                    return resp.json()
+                }).then(json => {
+
+                    resolve(json)
+                }).catch(e => {
+                    reject(e.message)
+                })
+
+            })
+        },
 
         issueCredential: (context, payload) => {
             return new Promise((resolve, reject) => {
@@ -77,15 +109,15 @@ const globalStore = {
                     if (resp.statusCode == 401) {
                         reject('Invalid Access Token')
                     }
-                    if(resp.statusCode==500){
+                    if (resp.statusCode == 500) {
                         reject(resp.message)
                     }
-                    if(resp.status==500){
+                    if (resp.status == 500) {
                         reject(resp.message)
                     }
                     return resp.json()
                 }).then(json => {
-                    
+
                     resolve(json)
                 }).catch(e => {
                     reject(e.message)
