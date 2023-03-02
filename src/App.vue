@@ -17,7 +17,7 @@
                                 </h1>
                                 <hr class="is-marginless">
                                 <h2 class="subtitle text-light-grey" style="margin-top: .5rem">
-                                    Decentralised Document Certifier
+                                    Decentralised Document Signer
                                 </h2>
                             </div>
                         </div>

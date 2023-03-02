@@ -52,6 +52,9 @@
       </div>
     </div>
 
+    <hf-pop-up
+    Header="Create Signature"
+    >
     <div class="card" v-if="pdf && !hideSignPad">
       <p class="card-header-title">Your signature</p>
       <div
@@ -68,6 +71,10 @@
         <a class="card-footer-item" @click="clear">Clear</a>
       </div>
     </div>
+
+    </hf-pop-up>
+
+    
   </div>
 </template>
 
@@ -80,9 +87,11 @@ import { mapState, mapMutations } from "vuex";
 import * as pdfjsLib from "pdfjs-dist/webpack";
 import { fabric } from "fabric";
 import notificationMixins from './mixins/notificationMixins'
+import HfPopUp from "./components/hfPopup.vue";
+
 export default {
   props: ["currentStep"],
-  components: { VPerfectSignature },
+  components: { VPerfectSignature, HfPopUp },
   mixins: [notificationMixins],
   data() {
     return {
@@ -141,6 +150,13 @@ export default {
   },
   methods: {
     ...mapMutations("globalStore", ["setPDFDoc"]),
+
+    openWalletPopup() {
+        this.$root.$emit('bv::show::modal')
+    },
+    closeWalletPopup() {
+        this.$root.$emit('bv::hide::modal')
+    },
     save() {
       this.savebtn = false;
       this.canvas.discardActiveObject().renderAll();
