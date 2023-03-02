@@ -1,37 +1,93 @@
 <template>
-  <b-card :header="credentialType" :class="cardClass" :style="cardStyle">
-    <b-row>
-      <b-icon-download  @click="download" v-if="verified" font-scale="2" style="float:right ; color: gray;" ></b-icon-download>
+  <div class="card" style="padding: 3rem; width: 100%;">
+    <form>
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"><strong>Document Id </strong></label>
+        <div class="col-sm-8">
+          <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="credential.id">
+        </div>
+      <b-icon class="col-sm-2" v-if="verified" icon="check-circle-fill" variant="success" font-scale="2" style="float:right ; color: green;"></b-icon>
+
+      </div>
+
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"><strong>Status</strong> </label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="status">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"><strong>File Size</strong> </label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="fileSize">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"><strong>File Type</strong> </label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="fileType">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"><strong>Issued By</strong> </label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="issuerName">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"><strong>Issued To</strong> </label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="credentialSubject.id">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"><strong>Issued At</strong></label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="issuanceDate">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"><strong>Expires On</strong></label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="expirationDate">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"><strong>Issuer Signature</strong> </label>
+        <div class="col-sm-10">
+          <input type="text" readonly class="form-control-plaintext" id="staticEmail" :value="proofs.proofValue">
+        </div>
+      </div>
+      <div class="form-group row">
+
+        <b-button-toolbar>
+          <b-button-group class="mr-1">
+            <button type="button" @click="download" class="btn btn-outline-secondary">
+        <b-icon icon="download" aria-hidden="true"></b-icon>
+        Download
+      </button>
+
+       
+      <button type="button" class="btn btn-outline-secondary" disabled>
+        <b-icon icon="share" aria-hidden="true"></b-icon> 
+        Share
+      </button>
+
+          </b-button-group>
+        </b-button-toolbar>
+
+       
+      </div>
       
 
-      <b-icon v-if="verified" icon="check-circle-fill" variant="success" font-scale="2"
-        style="float:right ; color: green;"></b-icon>
-      <b-col md="auto" class="px-2">
-        <div class="mb-2">
-          <h5 class="mb-1"><strong>Name : {{ credentialSubject.name }}</strong></h5>
-          <p class="small text-muted"><strong>ID : {{ credential.id }}</strong></p>
-          <p class="small text-muted"><strong>Issued By : </strong> {{ issuerName }}</p>
-          <p class="small text-muted"><strong>Issued on : </strong> {{ issuanceDate }}</p>
-          <p class="small text-muted"><strong>Expires on : </strong> {{ expirationDate }}</p>
-          <p class="small text-muted"> <strong>File Size : </strong> {{ fileSize }}</p>
-          <p class="small text-muted"><strong>File Type : </strong>{{ fileType }}</p>
-         
-        </div>
-      </b-col>
-      <hr>
-      <b-col md="auto" class="px-2">
-        <div class="mb-2">
-          <p class="small text-muted"> <strong>Status :</strong> {{ status }}</p>
-          <p class="small text-muted"> <strong>
-              Proof : </strong>{{ proofs.proofValue }}</p>
-        </div>
-      </b-col>
-    </b-row>
-    <div class="card-footer text-center">
-      <p class="small text-muted">{{ credential.issuer }} | {{ new Date(credential.issuanceDate).toLocaleDateString() }}
-      </p>
-    </div>
-  </b-card>
+    </form>
+  </div>
 </template>
 
 <script>

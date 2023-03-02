@@ -1,18 +1,40 @@
 <template>
     <div style="padding: 2rem 3rem; text-align: left;">
-        <button @click="previousPage"> {{ "<<" }} </button>
-                <input v-model="currentPage" disabled style="width: 20px; height: 25px; text-align: center;">
-                <button @click="nextPage">{{ ">>" }}</button>
-                <div> <canvas ref="pdfcanvas" id="myCanvas" style="border: 1px black solid;"></canvas>
+                <div>
+                    <b-button-toolbar>
+                        <b-button-group class="mr-1">
+                            <b-button title="Previous Page" @click="previousPage">
+                                <b-icon icon="arrow-left-circle" aria-hidden="true"></b-icon>
+                            </b-button>
+                            <b-button title="Current Page">
+                            {{ currentPage }}
+                            </b-button>
+                            <b-button  @click="nextPage" title="Next Page">
+                                <b-icon icon="arrow-right-circle" aria-hidden="true"></b-icon>
+                            </b-button>
+                        </b-button-group>
+                        <b-button-group class="mr-1" style="float:right">
+                            <b-button title="Issue Credential"  v-if="!loaded" @click="issueCred">
+                                <b-icon icon="file-earmark-arrow-up" aria-hidden="true"></b-icon>Finish
+                            </b-button>
+                            <b-button title="Verify Credential" v-if="loaded" @click="verifyCred">
+                                <b-icon icon="check-square" aria-hidden="true" ></b-icon> Verify
+                            </b-button>
+                        </b-button-group>
+                    </b-button-toolbar>
                 </div>
+                
+                <div class="card" style="max-height: 600px; overflow-y: scroll;"> 
+                    <canvas ref="pdfcanvas" id="myCanvas"></canvas>
+                </div>
+
                 <div style="display: flex ; align-items: center;">
                     <VerifiableCredential :credential="credentialDocument" :verified="verified" v-if="loaded"  />
-
                 </div>
-                <div style="text-align: center;">
+                <!-- <div style="text-align: center;">
                     <b-button  v-if="!loaded" @click="issueCred">Issue Credential</b-button>
                     <b-button  v-if="loaded && !verified" @click="verifyCred">verify</b-button>
-                </div>
+                </div> -->
     </div>
 
 
@@ -48,6 +70,8 @@ import * as pdfjsLib from 'pdfjs-dist/webpack';
 import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import VerifiableCredential from './components/VerifiableCredential.vue';
 import { PDFDocument } from 'pdf-lib';
+import eventBus from "./eventBus";
+
 export default {
     props: ['currentStep'],
     components: { VerifiableCredential },
@@ -234,18 +258,29 @@ export default {
 
         },
         async issueCred() {
-            const credential = await this.issueCredential(this.credential)
-            this.credentialDocument = credential.credentialDocument
-            this.loaded = true
+            try{
+                eventBus.$emit('updateLoader', true);
+                const credential = await this.issueCredential(this.credential)
+                this.credentialDocument = credential.credentialDocument
+                this.loaded = true
+            }catch(e){
+                console.error(e.message)
+            } finally{
+                eventBus.$emit('updateLoader', false);
+            }
         },
         async verifyCred() {
-           
+           try{
+            eventBus.$emit('updateLoader', true);
             const verify=await this.verifyCredential({credentialDocument:this.credentialDocument})
             this.verified=verify.verified
             console.log(this.verified)
+           }catch(e){
+            console.error(e.message)
+           } finally{   
+            eventBus.$emit('updateLoader', false);
+           }
         }
-
-
     }
 }
 </script>

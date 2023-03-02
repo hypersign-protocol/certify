@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.min.css">
         <section class="hero">
             <div class="hero-body" style="padding: 1rem 0">
-                <div class="container">
+                <div class="">
                     <div class="columns">
                         <div class="column is-12 is-offset-4" style="display: flex; align-items: center;">
                             <div class="is-pulled-left">
@@ -26,8 +26,8 @@
             </div>
         </section>
 
-        <section class="section" style="padding-top: .5rem">
-            <div class="container">
+        <section class="section" style="padding: 1rem ; min-height: 600px;">
+            <div class="">
                 <div class="columns">
                     <div class="column is-8 is-offset-2">
                         <horizontal-stepper :steps="demoSteps" @completed-step="completeStep" :top-buttons="true"
@@ -37,14 +37,8 @@
             </div>
         </section>
 
-        <footer class="footer">
-            <div class="container">
-                <div class="content has-text-centered">
-                    <p>
-                        <strong>Powered</strong> by <a target="_blank" :href="teamUrl">Hypersign</a>.
-                    </p>
-                </div>
-            </div>
+        <footer class="footer" style="background-color: white;">
+            <strong>Powered</strong> by <a target="_blank" :href="teamUrl">Hypersign</a>.
         </footer>
     </div>
 </template>
@@ -195,52 +189,4 @@ hr {
     border-top: dashed 1px;
 }
 
-li {
-    display: inline-block;
-    margin: 0 10px;
-}
-
-a {
-    color: #0b99b9;
-    text-decoration: underline;
-}
-
-.text-medium-grey {
-    color: #333;
-}
-
-.text-light-grey {
-    color: #888;
-}
-
-.box.formated {
-    position: relative;
-    padding: 0;
-}
-
-.box.formated .heading {
-    font-size: 1rem;
-    text-transform: capitalize;
-    padding: .8rem 1.5rem;
-    background-color: #fafafa;
-}
-
-.box.formated .content {
-    padding: 1rem 2rem;
-}
-
-i.top-left {
-    position: absolute;
-    left: 1.5rem;
-    top: 0.8rem;
-}
-
-.vertical-separator {
-    display: flex;
-    justify-content: space-around;
-}
-
-.vertical-separator .line {
-    border-right: 1px solid #cccccc;
-}
 </style>
