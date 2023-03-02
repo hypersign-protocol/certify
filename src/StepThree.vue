@@ -71,10 +71,12 @@ import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
 import VerifiableCredential from './components/VerifiableCredential.vue';
 import { PDFDocument } from 'pdf-lib';
 import eventBus from "./eventBus";
+import notificationMixins from './mixins/notificationMixins'
 
 export default {
     props: ['currentStep'],
     components: { VerifiableCredential },
+    mixins: [notificationMixins],
     data() {
         return {
             pdfDoc: {},
@@ -224,7 +226,7 @@ export default {
             this.render()
         },
         async generateCredential() {
-
+            
 
             const pdfDoc = this.getPDFDoc
             const pdfBytes = pdfDoc.pdfDoc
@@ -255,6 +257,7 @@ export default {
             this.credential.verificationMethodId = "did:hid:testnet:zF9hdCSFgp8cc6Q42e46A3yjHodpZeUTSWNQrMVFekWfB#key-1"
             this.credential.subjectDid = this.getSubjectDID
             this.pdfObj = pdfBytesDownload
+            this.notifySuccess('Credential generated successfully')
 
         },
         async issueCred() {
@@ -263,8 +266,12 @@ export default {
                 const credential = await this.issueCredential(this.credential)
                 this.credentialDocument = credential.credentialDocument
                 this.loaded = true
+                this.notifySuccess('Credential issued successfully')
+
             }catch(e){
                 console.error(e.message)
+                this.notifyErr(e.message)
+
             } finally{
                 eventBus.$emit('updateLoader', false);
             }
@@ -275,8 +282,10 @@ export default {
             const verify=await this.verifyCredential({credentialDocument:this.credentialDocument})
             this.verified=verify.verified
             console.log(this.verified)
+            this.notifySuccess('Credential verified successfully')
            }catch(e){
             console.error(e.message)
+            this.notifyErr(e.message)
            } finally{   
             eventBus.$emit('updateLoader', false);
            }

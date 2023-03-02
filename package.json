@@ -16,6 +16,7 @@
     "v-perfect-signature": "^1.1.11",
     "vue": "^2.6.14",
     "vue-loading-overlay": "3.4.0",
+    "vue-notification": "^1.3.20",
     "vue-stepper": "^1.4.2",
     "vuelidate": "^0.7.7",
     "vuex": "3.4.0"

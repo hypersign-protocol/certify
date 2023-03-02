@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <vue-loader :active.sync="isLoading" :can-cancel="true" :is-full-page="true"></vue-loader>
-
+        <notifications group="foo" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.min.css">
         <section class="hero">
             <div class="hero-body" style="padding: 1rem 0">

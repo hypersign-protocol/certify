@@ -47,15 +47,17 @@
 </template>
 
 <script>
+    import notificationMixins from './mixins/notificationMixins'
     import {validationMixin} from 'vuelidate'
     import {required} from 'vuelidate/lib/validators'
     import { mapState, mapGetters, mapMutations  } from 'vuex';
     import eventBus from "./eventBus";
+    
 
     const ssi_api_host = 'https://api.entity.hypersign.id/api/v1';
     export default {
         props: ['clickedNext', 'currentStep'],
-        mixins: [validationMixin],
+        mixins: [validationMixin, notificationMixins],
         validations: {
             didSubject: {
                 required
@@ -95,8 +97,6 @@
             }
         },
         mounted() {
-            console.log(this.$v.$invalid)
-            console.log(this.$v)
             if(!this.$v.$invalid) {
                 this.$emit('can-continue', {value: true});
             } else {
@@ -108,7 +108,8 @@
             async createNewDID() {
                 try{
                     if(this.didSubject){
-                        console.error("You identity already created")
+                        this.notifyErr('Your identity already created')
+                        console.error("Your identity already created")
                         return 
                     }
                     // create a new did Doc
@@ -129,9 +130,11 @@
                     }
                     const { did } = createDIDJson;
                     this.didSubject = did;
+                    this.notifySuccess('Identity created successfully')
                     // this.setSubjectDID(this.form.did)
                     // register a new did doc
                 }catch(e){
+                    this.notifyErr(e.message)
                     console.error(e.message);
                 } finally {
                     eventBus.$emit('updateLoader', false);

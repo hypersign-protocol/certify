@@ -79,11 +79,11 @@ import { mapState, mapMutations } from "vuex";
 // import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import * as pdfjsLib from "pdfjs-dist/webpack";
 import { fabric } from "fabric";
-
+import notificationMixins from './mixins/notificationMixins'
 export default {
   props: ["currentStep"],
   components: { VPerfectSignature },
-
+  mixins: [notificationMixins],
   data() {
     return {
       strokeOptions: {
@@ -272,6 +272,7 @@ export default {
             // fcanvas.add(rect);
             // fcanvas.renderAll()
           });
+          this.notifySuccess('PDF page rendered successfully')
         });
 
         this.$emit("can-continue", { value: false });
