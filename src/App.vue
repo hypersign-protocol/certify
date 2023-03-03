@@ -7,7 +7,7 @@
             <div class="hero-body" style="padding: 1rem 0">
                 <div class="">
                     <div class="columns">
-                        <div class="column is-12 is-offset-4" style="display: flex; align-items: center;">
+                        <div class="column is-12 is-offset-5" style="display: flex; align-items: center;">
                             <div class="is-pulled-left">
                                 <img width="80px" src="./assets/logo.png">
                             </div>

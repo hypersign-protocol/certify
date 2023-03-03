@@ -5,12 +5,14 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "deploy": "yarn build && gh-pages -d dist"
   },
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.11",
     "core-js": "^3.8.3",
     "fabric": "^5.3.0",
+    "gh-pages": "^5.0.0",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^3.4.118",
     "v-perfect-signature": "^1.1.11",
