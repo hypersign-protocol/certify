@@ -21,54 +21,59 @@
                 <textarea :class="['textarea', ($v.form.message.$error) ? 'is-danger' : '']"  placeholder="Textarea" v-model="form.message"></textarea>
             </div>
         </div> -->
-
-        <div class="field">
+        <!-- <div class="field">
             <div class="control">
                 <button class="btn btn-primary" @click="createNewDID()">Create New Id</button>
             </div>
-        </div>
+        </div> -->
 
-        <div class="field">
+        <div class="">
             <label class="label">Your DID</label>
-            <div class="control">
-                <input 
-                :class="['input', ($v.form.did.$error) ? 'is-danger' : '']"  
-                type="text" placeholder="did:hid:testnet:123123" 
-                v-model="form.did" 
-                disabled>
+
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" 
+                    :class="['form-control', ($v.didSubject.$error) ? 'is-danger' : '']"
+                    disabled
+                    v-model="didSubject"
+                    placeholder="did:hid:testnet:123123" aria-label="did:hid:testnet:123123" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" @click="createNewDID()"><b-icon icon="person-fill"></b-icon> Create New Id</button>
+                </div>
+                
             </div>
-            <p v-if="$v.form.did.$error" class="help is-danger">Please create your identity first</p>
+            <p v-if="$v.didSubject.$error" class="help is-danger">Please create your identity first</p>
         </div>
     </div>
 </template>
 
 <script>
+    import notificationMixins from './mixins/notificationMixins'
     import {validationMixin} from 'vuelidate'
     import {required} from 'vuelidate/lib/validators'
     import { mapState, mapGetters, mapMutations  } from 'vuex';
-  import eventBus from "./eventBus";
+    import eventBus from "./eventBus";
+    
 
     const ssi_api_host = 'https://api.entity.hypersign.id/api/v1';
     export default {
         props: ['clickedNext', 'currentStep'],
-        mixins: [validationMixin],
-        data() {
-            return {
-                form: {
-                    did:""
-                }
-            }
-        },
+        mixins: [validationMixin, notificationMixins],
         validations: {
-            form: {
-                did: {
-                    required
-                }
+            didSubject: {
+                required
             }
         },
         computed: {
             ...mapGetters("globalStore", ["getSSIHeaders","getSSIAppAccessToken"]),
-            ...mapState("globalStore", ["subjectDID"])
+            ...mapState("globalStore", ["subjectDID"]),
+            didSubject: {
+                        get () {
+                            return this.subjectDID
+                        },
+                        set (value) {
+                            this.setSubjectDID(value)
+                        }
+                    }
         },  
         watch: {
             $v: {
@@ -87,7 +92,7 @@
             clickedNext(val) {
                 console.log(val);
                 if(val === true) {
-                    this.$v.form.$touch();
+                    this.$v.didSubject.$touch();
                 }
             }
         },
@@ -102,6 +107,11 @@
             ...mapMutations("globalStore", ['setSubjectDID']),
             async createNewDID() {
                 try{
+                    if(this.didSubject){
+                        this.notifyErr('Your identity already created')
+                        console.error("Your identity already created")
+                        return 
+                    }
                     // create a new did Doc
                     eventBus.$emit('updateLoader', true);
 
@@ -119,10 +129,12 @@
                         throw new Error(createDIDJson.message.toString())
                     }
                     const { did } = createDIDJson;
-                    this.form.did = did;
-                    this.setSubjectDID(this.form.did)
+                    this.didSubject = did;
+                    this.notifySuccess('Identity created successfully')
+                    // this.setSubjectDID(this.form.did)
                     // register a new did doc
                 }catch(e){
+                    this.notifyErr(e.message)
                     console.error(e.message);
                 } finally {
                     eventBus.$emit('updateLoader', false);
