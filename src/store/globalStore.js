@@ -8,7 +8,7 @@ const globalStore = {
     state: {
         ssiAPIKey: '764840749413568265abfaa7d76b9.87810ca9cc65894e3473851729f205c650b91756e8f3bd93deea6c8ed8d4ea6620c2d4d7b4ba84e7718a491fb558a6552',
         ssiAppAccessTokenKey: 'ssiAppAccessTokenKey',
-        subjectDID: "",
+        subjectDID: "did:hid:testnet:zDaTXjQUY3nNWWb5pyTNtFQtq24DAXfDiLUDAH9SVgArD",
         pdfDocObject: {},
 
 

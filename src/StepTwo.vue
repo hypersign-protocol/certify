@@ -7,19 +7,6 @@
         class="fileinput input"
         @change="onChange"
       />
-
-
-      <!-- <div class="input-group mb-3">
-        <div class="custom-file">
-            <input
-                type="file"
-                accept="application/pdf"
-                class="custom-file-input"
-                @change="onChange"
-            />
-            <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
-        </div>
-      </div> -->
     </div>
     
     <div class="" v-if="pdf" style="padding: 1rem 0">
@@ -39,9 +26,13 @@
                     </b-button-group>
 
                     <b-button-group class="mr-1">
-                        <b-button title="Align left"  v-if="savebtn" @click="save">
+                        <b-button title="Save"  v-if="savebtn" @click="save">
                             <b-icon icon="save" aria-hidden="true"></b-icon> Save
-                        </b-button>                    
+                        </b-button>     
+                        
+                        <b-button title="Create Signature" v-if="pdf && !hideSignPad"  @click="openWalletPopup()">
+                            <b-icon icon="vector-pen" aria-hidden="true"></b-icon> Create Signature
+                        </b-button>    
                     </b-button-group>
                 </b-button-toolbar>
             </div>
@@ -52,18 +43,13 @@
       </div>
     </div>
 
-    <hf-pop-up
-    Header="Create Signature"
-    >
-    <div class="card" v-if="pdf && !hideSignPad">
-      <p class="card-header-title">Your signature</p>
+    <b-modal ref="signature" title="Create & Attach Signature" hide-footer static lazy>
+        <div class="card" v-if="pdf && !hideSignPad">
       <div
         style="border: 2px solid #8080804f; margin: 10px; border-radius: 10px;"
       >
-        <VPerfectSignature
-          :stroke-options="strokeOptions"
-          ref="signaturePad"
-          width="100%"
+        <VueSignaturePad id="vue-signature" width="100%" height="200px" ref="signaturePad"
+        :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}"
         />
       </div>
       <div class="card-footer">
@@ -71,30 +57,24 @@
         <a class="card-footer-item" @click="clear">Clear</a>
       </div>
     </div>
-
-    </hf-pop-up>
-
-    
+    </b-modal>    
   </div>
 </template>
 
 <script>
-// import { PDFDocument } from 'pdf-lib'
-import VPerfectSignature from "v-perfect-signature";
-// import {ref} from 'vue';
+// import VPerfectSignature from "v-perfect-signature";
 import { mapState, mapMutations } from "vuex";
-// import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import * as pdfjsLib from "pdfjs-dist/webpack";
 import { fabric } from "fabric";
 import notificationMixins from './mixins/notificationMixins'
-import HfPopUp from "./components/hfPopup.vue";
-
+import { VueSignaturePad } from 'vue-signature-pad';
 export default {
   props: ["currentStep"],
-  components: { VPerfectSignature, HfPopUp },
+  components: { VueSignaturePad },
   mixins: [notificationMixins],
   data() {
     return {
+        canvasVehiculo: false,
       strokeOptions: {
         size: 10,
         thinning: 0.75,
@@ -131,7 +111,6 @@ export default {
   },
   mounted() {
     // this.canvas = document.getElementById('myCanvas')
-    console.log(this.$refs);
     // window.addEventListener('resize', this.onWindowResize)
     // this.canvas.on({
     //     'selection:created': () => {
@@ -151,11 +130,19 @@ export default {
   methods: {
     ...mapMutations("globalStore", ["setPDFDoc"]),
 
+    
     openWalletPopup() {
-        this.$root.$emit('bv::show::modal')
+        this.$refs['signature'].show()
+        // this.$nextTick(() => {
+        //     console.log(this.$refs)
+        //     console.log(this.$refs['signaturePad'])
+        //     this.$refs['signaturePad'].resizeCanvas();
+        // })
+        
+        
     },
     closeWalletPopup() {
-        this.$root.$emit('bv::hide::modal')
+        this.$refs['signature'].hide()
     },
     save() {
       this.savebtn = false;
@@ -309,10 +296,13 @@ export default {
       };
     },
     clear() {
-      this.$refs.signaturePad?.clear();
+      this.$refs.signaturePad?.clearSignature();
+      this.closeWalletPopup()
     },
     attachSignature() {
-      const dataURL = this.$refs.signaturePad.toDataURL();
+      const { data } = this.$refs.signaturePad.saveSignature();
+      console.log(data)
+      const dataURL = data;
       fabric.Image.fromURL(dataURL, (img) => {
         img.set({
           top: 50,
@@ -351,4 +341,23 @@ export default {
   border: none !important;
   color: aliceblue !important;
 }
+
+div#__BVID__23___BV_modal_backdrop_{
+    z-index: 0;
+}
+
+#vue-signature {
+  border: double 3px transparent;
+  border-radius: 5px;
+  background-image: linear-gradient(white, white),
+    radial-gradient(circle at top left, #4bc5e8, #9f6274);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+
+
+/* #vue-signature{
+    height: 100%;
+    width: 450px;
+} */
 </style>
