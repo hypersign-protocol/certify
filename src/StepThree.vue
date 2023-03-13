@@ -118,7 +118,7 @@ export default {
                     "VerifiableCredential",
                     "DigitalDocument"
                 ],
-                "issuer": "did:hid:testnet:zF9hdCSFgp8cc6Q42e46A3yjHodpZeUTSWNQrMVFekWfB",
+                "issuer": "did:hid:testnet:z9io32TUediv4mCDPfh7tFH2oCKLqupp3q1pLof3TMDJB",
                 "issuanceDate": "2023-02-28T09:34:19Z",
                 "expirationDate": "2030-12-24T18:30:00Z",
                 "credentialSubject": {
@@ -142,7 +142,7 @@ export default {
                 "proof": {
                     "type": "Ed25519Signature2020",
                     "created": "2023-02-28T09:35:59Z",
-                    "verificationMethod": "did:hid:testnet:zF9hdCSFgp8cc6Q42e46A3yjHodpZeUTSWNQrMVFekWfB#key-1",
+                    "verificationMethod": "did:hid:testnet:z9io32TUediv4mCDPfh7tFH2oCKLqupp3q1pLof3TMDJB#key-1",
                     "proofPurpose": "assertionMethod",
                     "proofValue": "z5FeuG9mUxtWioByBTFEs5XUxsDQCVH2oQcn4rQdRTyh4ASFWB3ubGNYmetJsSTb8PPV2RcuCtE9pxrtdUwNiahtA"
                 },
@@ -253,8 +253,8 @@ export default {
             this.credential.expirationDate = new Date('12/25/2030').toISOString()
             this.credential.fields.datePublished = new Date().toISOString()
             this.credential.fields.dateModified = null
-            this.credential.issuerDid = 'did:hid:testnet:zF9hdCSFgp8cc6Q42e46A3yjHodpZeUTSWNQrMVFekWfB'
-            this.credential.verificationMethodId = "did:hid:testnet:zF9hdCSFgp8cc6Q42e46A3yjHodpZeUTSWNQrMVFekWfB#key-1"
+            this.credential.issuerDid = 'did:hid:testnet:z9io32TUediv4mCDPfh7tFH2oCKLqupp3q1pLof3TMDJB'
+            this.credential.verificationMethodId = "did:hid:testnet:z9io32TUediv4mCDPfh7tFH2oCKLqupp3q1pLof3TMDJB#key-1"
             this.credential.subjectDid = this.getSubjectDID
             this.pdfObj = pdfBytesDownload
             this.notifySuccess('Credential generated successfully')
