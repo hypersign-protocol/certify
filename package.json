@@ -14,15 +14,17 @@
     "fabric": "^5.3.0",
     "gh-pages": "^5.0.0",
     "pdf-lib": "^1.17.1",
-    "pdfjs-dist": "^3.4.118",
+    "pdfjs-dist": "^2",
     "v-perfect-signature": "^1.1.11",
+    "viewer": "^0.10.11",
     "vue": "^2.6.14",
     "vue-loading-overlay": "3.4.0",
     "vue-notification": "^1.3.20",
     "vue-signature-pad": "^3.0.2",
     "vue-stepper": "^1.4.2",
     "vuelidate": "^0.7.7",
-    "vuex": "3.4.0"
+    "vuex": "3.4.0",
+    "worker-loader": "^3.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -36,6 +38,11 @@
     "node-sass": "^8.0.0",
     "sass-loader": "^13.2.0",
     "vue-template-compiler": "^2.6.14"
+  },
+  "staticFiles": {
+    "staticPath": [
+      "/node_modules/pdfjs-dist/build/pdf.worker.min.js"
+    ]
   },
   "eslintConfig": {
     "root": true,
