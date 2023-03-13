@@ -6,7 +6,7 @@ const ssi_api_host = 'https://api.entity.hypersign.id/api/v1';
 const globalStore = {
     namespaced: true,
     state: {
-        ssiAPIKey: '764840749413568265abfaa7d76b9.87810ca9cc65894e3473851729f205c650b91756e8f3bd93deea6c8ed8d4ea6620c2d4d7b4ba84e7718a491fb558a6552',
+        ssiAPIKey: 'e1689c2d06c52a53e0fb645a1151c.1cf87176da14a018ef84d2761b3a1fdf77ce2928ead6f1912aa410397eb7b12c32aaa95f3cf120a9e3f10e86a652042f3',
         ssiAppAccessTokenKey: 'ssiAppAccessTokenKey',
         subjectDID: "",
         pdfDocObject: {},
