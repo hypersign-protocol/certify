@@ -38,7 +38,7 @@
                 </b-button>
 
                 <b-button title="Create Signature" v-if="pdf && !hideSignPad" @click="openWalletPopup()">
-                  <b-icon icon="vector-pen" aria-hidden="true"></b-icon> Create Signature
+                  <b-icon icon="vector-pen" aria-hidden="true"></b-icon> Attach Signature
                 </b-button>
               </b-button-group>
             </b-button-toolbar>
@@ -114,7 +114,6 @@ export default {
   data() {
     return {
       selected: "null",
-      canvasVehiculo: false,
       strokeOptions: {
         size: 10,
         thinning: 0.75,
@@ -329,7 +328,11 @@ export default {
       this.selectPDFRender()
     },
     openWalletPopup() {
-      this.$refs['signature'].show()
+      if(!localStorage.getItem('tempSignature')){
+       return this.$refs['signature'].show()
+
+      }
+      return this.attachSignature()
       // this.$nextTick(() => {
       //     console.log(this.$refs)
       //     console.log(this.$refs['signaturePad'])
@@ -498,9 +501,16 @@ export default {
       this.closeWalletPopup()
     },
     attachSignature() {
-      const { data } = this.$refs.signaturePad.saveSignature();
+let datatemp;
+      try {
+        const { data } = this.$refs.signaturePad.saveSignature();
+        datatemp=data
+
+      } catch (error) {
+        console.log(error);
+      }
       // console.log(data)
-      const dataURL = data;
+      const dataURL = datatemp===undefined?localStorage.getItem('tempSignature'):datatemp;
       fabric.Image.fromURL(dataURL, (img) => {
         img.set({
           top: 50,
@@ -548,7 +558,7 @@ div#__BVID__23___BV_modal_backdrop_ {
   border: double 3px transparent;
   border-radius: 5px;
   background-image: linear-gradient(white, white),
-    radial-gradient(circle at top left, #4bc5e8, #9f6274);
+  radial-gradient(circle at top left, #4bc5e8, #9f6274);
   background-origin: border-box;
   background-clip: content-box, border-box;
 }
