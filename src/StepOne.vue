@@ -1,31 +1,68 @@
 <template>
     <div style="padding: 2rem 3rem; text-align: left;">
-        <!-- <div class="field">
-            <label class="label">Username</label>
-            <div class="control">
-                <input :class="['input', ($v.form.username.$error) ? 'is-danger' : '']" type="text" placeholder="Text input"
-                       v-model="form.username">
+        <b-card no-body  v-if="tempSignature === null" >
+            <b-tabs  content-class="mt-3"  style="display: block;" card>
+            <b-tab title="Type" >
+                <template #title> 
+                    <b-icon  icon="type" />
+
+                </template>
+
+                <div class="card">
+                <div style="border: 1px solid #8080804f; margin: 10px; border-radius: 10px;">
+                    <b-input type="text" v-model="textData" class="input-group" v-if="tempSignature === null"
+                        @keyup="getSignature($event)" />
+                    <div class="container">
+                        <b-form-group v-slot="{ ariaDescribedby }">
+                            <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="some-radios"
+                                value="Satisfaction" default><img src="" id="svg1" alt="" srcset=""></b-form-radio>
+                            <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="some-radios"
+                                value="Autography"><img src="" id="svg2" alt="" srcset=""></b-form-radio>
+                        </b-form-group>
+                        <br>
+
+                    </div>
+                </div>
+
+
+
+                <div class="card-footer">
+                    <a class="card-footer-item" @click="save()">Save</a>
+                </div>
             </div>
-            <p v-if="$v.form.username.$error" class="help is-danger">that username is invalid</p>
-        </div> -->
-        <!-- <div class="field">
-            <label class="label">Email</label>
-            <div class="control">
-                <input :class="['input', ($v.form.demoEmail.$error) ? 'is-danger' : '']"  type="text" placeholder="Email input" v-model="form.demoEmail">
+
+            </b-tab>
+            <b-tab title="Signature">
+                <template #title> 
+                     <b-icon  icon="vector-pen" />
+
+                </template>
+                <div class="card">
+                <div style="border: 2px solid #8080804f; margin: 10px; border-radius: 10px;">
+                    <VueSignaturePad id="vue-signature" width="100%" height="300px" ref="signaturePad"
+                        :options="{ onBegin: () => { $refs.signaturePad.resizeCanvas() } }" />
+                </div>
+                <div class="card-footer">
+                    <a class="card-footer-item" @click="createKeyPair">Save</a>
+                    <a class="card-footer-item" @click="clear">Clear</a>
+                </div>
             </div>
-            <p v-if="$v.form.demoEmail.$error" class="help is-danger">This email is invalid</p>
-        </div> -->
-        <!-- <div class="field">
-            <label class="label">Message</label>
-            <div class="control">
-                <textarea :class="['textarea', ($v.form.message.$error) ? 'is-danger' : '']"  placeholder="Textarea" v-model="form.message"></textarea>
-            </div>
-        </div> -->
-        <!-- <div class="field">
-            <div class="control">
-                <button class="btn btn-primary" @click="createNewDID()">Create New Id</button>
-            </div>
-        </div> -->
+            </b-tab>
+            <b-tab title="Upload">
+                <template #title> 
+                    <b-icon  icon="upload" />
+
+                </template>
+                <div class="input-group" v-if="tempSignature === null">
+            <b-form-group style="width: 100%;">
+                <b-form-file id="file-default" accept="image/png" @change="uploadSignature"></b-form-file>
+            </b-form-group>
+        </div>
+            </b-tab>
+
+        </b-tabs>
+    </b-card>
+<!--        
         <b-modal ref="signature" title="Create Signature" hide-footer static lazy>
             <div class="card">
                 <div style="border: 2px solid #8080804f; margin: 10px; border-radius: 10px;">
@@ -37,24 +74,52 @@
                     <a class="card-footer-item" @click="clear">Clear</a>
                 </div>
             </div>
-        </b-modal>
-        <div class="input-group" v-if="tempSignature===null">
+        </b-modal> -->
+<!-- 
+        <b-modal ref="text2sign" title="Type Signature" hide-footer static lazy>
+            <div class="card">
+                <div style="border: 2px solid #8080804f; margin: 10px; border-radius: 10px;">
+                    <input type="text" v-model="textData" class="input-group" v-if="tempSignature === null"
+                        @keyup="getSignature($event)">
+                    <div class="container">
+                        <b-form-group v-slot="{ ariaDescribedby }">
+                            <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="some-radios"
+                                value="Satisfaction"><img src="" id="svg1" alt="" srcset=""></b-form-radio>
+                            <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="some-radios"
+                                value="Autography"><img src="" id="svg2" alt="" srcset=""></b-form-radio>
+                        </b-form-group>
+                        <br>
+
+                    </div>
+                </div>
+
+
+
+                <div class="card-footer">
+                    <a class="card-footer-item" @click="save()">Save</a>
+                    <a class="card-footer-item" @click="openSignaturePad()">Draw</a>
+                </div>
+            </div>
+        </b-modal> -->
+        <!-- <div class="input-group" v-if="tempSignature === null">
             <b-form-group style="width: 100%;">
                 <b-form-file id="file-default" accept="image/png" @change="uploadSignature"></b-form-file>
             </b-form-group>
-        </div>
-        <hr data-content="OR" class="hr-text" v-if="tempSignature===null">
+        </div> -->
 
-        <div class="input-group-append" >
-            <button class="btn btn-outline-secondary" v-if="tempSignature===null" @click="openSignaturePad()"><b-icon icon="vector-pen"></b-icon>
-                Create Signature</button>
+        <div class="input-group-append">
+
+<!-- 
+            <button class="btn btn-outline-secondary" v-if="tempSignature === null" @click="openSignatureText()"><b-icon
+                    icon="vector-pen"></b-icon>
+                Create Signature</button> -->
 
 
 
             <button v-if="tempSignature !== null" class="btn btn-outline-secondary" @click="downloadSignature"><b-icon
                     icon="download"></b-icon>
                 Download Signature</button>
-                <button v-if="tempSignature !== null" class="btn btn-outline-secondary" @click="newSignature"><b-icon
+            <button v-if="tempSignature !== null" class="btn btn-outline-secondary" @click="newSignature"><b-icon
                     icon="arrow-clockwise"></b-icon>
                 Reset</button>
         </div>
@@ -75,11 +140,14 @@
 </template>
 
 <script>
+/* eslint-disable */
 import notificationMixins from './mixins/notificationMixins'
 import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
 import { mapState, mapGetters, mapMutations } from 'vuex';
-// import {Buffer} from 'buffer'
+import { Buffer } from 'buffer'
+import { Text2Sign, svgToPng } from 'Text2Sign'
+import fonts from './assets/fonts.json'
 import crypto from 'crypto';
 import eventBus from "./eventBus";
 import { VueSignaturePad } from 'vue-signature-pad';
@@ -99,7 +167,10 @@ export default {
                 streamline: 0.5,
             },
             tempSignature: null,
-            HypersignDID: null
+            HypersignDID: null,
+            textData: 'Enter Text',
+            timeoutId: '',
+            selected: 'Satisfaction',
         }
     },
     validations: {
@@ -141,6 +212,20 @@ export default {
         }
     },
     async mounted() {
+        this.getSignatureImage(this.textData)
+        this.$on('imageLoaded', (img) => {
+            localStorage.setItem('tempSignature', img)
+            this.createKeyPairWithData(img)
+        })
+
+       
+
+        const data = localStorage.getItem('tempSignature')
+        if (data !== '' || data !== null) {
+            this.createKeyPairWithData(data)
+
+        }
+
         if (!this.$v.$invalid) {
             this.$emit('can-continue', { value: true });
         } else {
@@ -151,13 +236,54 @@ export default {
     },
     methods: {
         ...mapMutations("globalStore", ['setSubjectDID']),
-        newSignature(){
+
+        getSignature(e) {
+            clearTimeout(this.timeoutId);
+            this.timeoutId = setTimeout(() => {
+                return this.getSignatureImage(e.target.value)
+            }, 500)
+
+
+        }
+        ,
+        getSignatureImage(data) {
+
+            const text2sign = new Text2Sign()
+
+            text2sign.generateSignature(data, 50, { url: fonts.Satisfaction, name: 'Satisfaction' }, 'black')
+            const svgData1 = text2sign.getSVGdata()
+            svgToPng(svgData1, (img) => {
+                document.getElementById('svg1').src = img
+
+            })
+
+            const text2sign2 = new Text2Sign()
+
+            text2sign2.generateSignature(data, 50, { url: fonts.Autography, name: 'Autography' }, 'black')
+
+            const svgData2 = text2sign2.getSVGdata()
+            svgToPng(svgData2, (img) => {
+                document.getElementById('svg2').src = img
+
+            })
+
+
+        },
+        newSignature() {
             localStorage.clear()
             window.location.replace('/')
         }
         ,
         async openSignaturePad() {
+            this.$refs['text2sign'].hide()
             this.$refs['signature'].show()
+
+        },
+        async openSignatureText() {
+            this.$refs['text2sign'].show()
+            if (this.textData !== "") {
+                this.getSignatureImage(this.textData)
+            }
 
         },
         closeWalletPopup() {
@@ -195,11 +321,48 @@ export default {
             const finalSeedBytes = seedBytes1.map((a, i) => a + seedBytes2[i])
             return finalSeedBytes
         },
+        save() {
+            if (this.textData === '') {
+                return this.notifyErr("Empty Data")
+            }
+            const text2sign = new Text2Sign()
+
+            text2sign.generateSignature(this.textData, 100, { url: fonts[this.selected], name: this.selected }, 'black')
+            const svgData = text2sign.getSVGdata()
+
+            svgToPng(svgData, (img) => {
+                this.$emit('imageLoaded', img)
+            })
+
+        },
+        createKeyPairWithData(data) {
+
+            const image = new Image()
+            image.src = data
+            let that = this
+            image.onload = async function () {
+                // const data = that.watermakImageWithText(this, "Created with Hypersign-Certify "
+                //     + new Date())
+                localStorage.setItem('tempSignature', data)
+                that.notifyInfo("Signature Created")
+                that.tempSignature = data
+                const finalSeedBytes = that.seedFromDataURL(data)
+                const hypersignDID = new HypersignDID({ namespace: 'testnet' })
+                const kp = await hypersignDID.generateKeys({ seed: finalSeedBytes })
+                const did = await hypersignDID.generate({
+                    publicKeyMultibase: kp.publicKeyMultibase
+                })
+                localStorage.setItem('DidDocument', JSON.stringify(did))
+                that.didSubject = did.id
+                localStorage.setItem('KeyPair', JSON.stringify(kp))
+
+            }
+        },
         createKeyPair() {
             const { data } = this.$refs.signaturePad.saveSignature();
             if (data == undefined) {
                 this.notifyErr("No Signature is created")
-                return this.closeWalletPopup()
+                return 
             }
             const image = new Image()
             image.src = data
@@ -208,7 +371,6 @@ export default {
                 const data = that.watermakImageWithText(this, "Created with Hypersign-Certify "
                     + new Date())
                 localStorage.setItem('tempSignature', data)
-                that.closeWalletPopup()
                 that.notifyInfo("Signature Created")
                 that.tempSignature = data
                 const finalSeedBytes = that.seedFromDataURL(data)
@@ -281,10 +443,10 @@ export default {
             let file = e.target.files[0];
             let reader = new FileReader();
             reader.readAsDataURL(file)
-            let that=this
-            reader.onload=async (e)=>{
-                that.tempSignature=e.target.result
-                localStorage.setItem('tempSignature',that.tempSignature)
+            let that = this
+            reader.onload = async (e) => {
+                that.tempSignature = e.target.result
+                localStorage.setItem('tempSignature', that.tempSignature)
                 const finalSeedBytes = that.seedFromDataURL(this.tempSignature)
                 const hypersignDID = new HypersignDID({ namespace: 'testnet' })
                 const kp = await hypersignDID.generateKeys({ seed: finalSeedBytes })
@@ -336,4 +498,19 @@ hr.hr-text::before {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+a{
+    text-decoration: none !important;
+    
+}
+.card-footer , .card{
+    text-decoration: none !important;
+}
+.tabs,.card,.card-header,.nav, .active{
+    background-color: white !important;
+}
+.card{
+    scroll-behavior: unset;
+}
+
 </style>
