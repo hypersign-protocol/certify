@@ -1,68 +1,68 @@
 <template>
     <div style="padding: 2rem 3rem; text-align: left;">
-        <b-card no-body  v-if="tempSignature === null" >
-            <b-tabs  content-class="mt-3"  style="display: block;" card>
-            <b-tab title="Type" >
-                <template #title> 
-                    <b-icon  icon="type" />
+        <b-card no-body v-if="tempSignature === null">
+            <b-tabs content-class="mt-3" style="display: block;" card>
+                <b-tab title="Type">
+                    <template #title>
+                        <b-icon icon="type" />
 
-                </template>
+                    </template>
 
-                <div class="card">
-                <div style="border: 1px solid #8080804f; margin: 10px; border-radius: 10px;">
-                    <b-input type="text" v-model="textData" class="input-group" v-if="tempSignature === null"
-                        @keyup="getSignature($event)" />
-                    <div class="container">
-                        <b-form-group v-slot="{ ariaDescribedby }">
-                            <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="some-radios"
-                                value="Satisfaction" default><img src="" id="svg1" alt="" srcset=""></b-form-radio>
-                            <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="some-radios"
-                                value="Autography"><img src="" id="svg2" alt="" srcset=""></b-form-radio>
-                        </b-form-group>
-                        <br>
+                    <div class="card">
+                        <div style="border: 1px solid #8080804f; margin: 10px; border-radius: 10px;">
+                            <b-input type="text" v-model="textData" class="input-group" v-if="tempSignature === null"
+                                @keyup="getSignature($event)" />
+                            <div class="container">
+                                <b-form-group v-slot="{ ariaDescribedby }">
+                                    <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="some-radios"
+                                        value="Satisfaction" default><img src="" id="svg1" alt="" srcset=""></b-form-radio>
+                                    <b-form-radio v-model="selected" :aria-describedby="ariaDescribedby" name="some-radios"
+                                        value="Autography"><img src="" id="svg2" alt="" srcset=""></b-form-radio>
+                                </b-form-group>
+                                <br>
 
+                            </div>
+                        </div>
+
+
+
+                        <div class="card-footer">
+                            <a class="card-footer-item" @click="save()">Save</a>
+                        </div>
                     </div>
-                </div>
 
+                </b-tab>
+                <b-tab title="Signature">
+                    <template #title>
+                        <b-icon icon="vector-pen" />
 
+                    </template>
+                    <div class="card">
+                        <div style="border: 2px solid #8080804f; margin: 10px; border-radius: 10px;">
+                            <VueSignaturePad id="vue-signature" width="100%" height="300px" ref="signaturePad"
+                                :options="{ onBegin: () => { $refs.signaturePad.resizeCanvas() } }" />
+                        </div>
+                        <div class="card-footer">
+                            <a class="card-footer-item" @click="createKeyPair">Save</a>
+                            <a class="card-footer-item" @click="clear">Clear</a>
+                        </div>
+                    </div>
+                </b-tab>
+                <b-tab title="Upload">
+                    <template #title>
+                        <b-icon icon="upload" />
 
-                <div class="card-footer">
-                    <a class="card-footer-item" @click="save()">Save</a>
-                </div>
-            </div>
+                    </template>
+                    <div class="input-group" v-if="tempSignature === null">
+                        <b-form-group style="width: 100%;">
+                            <b-form-file id="file-default" accept="image/png" @change="uploadSignature"></b-form-file>
+                        </b-form-group>
+                    </div>
+                </b-tab>
 
-            </b-tab>
-            <b-tab title="Signature">
-                <template #title> 
-                     <b-icon  icon="vector-pen" />
-
-                </template>
-                <div class="card">
-                <div style="border: 2px solid #8080804f; margin: 10px; border-radius: 10px;">
-                    <VueSignaturePad id="vue-signature" width="100%" height="300px" ref="signaturePad"
-                        :options="{ onBegin: () => { $refs.signaturePad.resizeCanvas() } }" />
-                </div>
-                <div class="card-footer">
-                    <a class="card-footer-item" @click="createKeyPair">Save</a>
-                    <a class="card-footer-item" @click="clear">Clear</a>
-                </div>
-            </div>
-            </b-tab>
-            <b-tab title="Upload">
-                <template #title> 
-                    <b-icon  icon="upload" />
-
-                </template>
-                <div class="input-group" v-if="tempSignature === null">
-            <b-form-group style="width: 100%;">
-                <b-form-file id="file-default" accept="image/png" @change="uploadSignature"></b-form-file>
-            </b-form-group>
-        </div>
-            </b-tab>
-
-        </b-tabs>
-    </b-card>
-<!--        
+            </b-tabs>
+        </b-card>
+        <!--        
         <b-modal ref="signature" title="Create Signature" hide-footer static lazy>
             <div class="card">
                 <div style="border: 2px solid #8080804f; margin: 10px; border-radius: 10px;">
@@ -75,7 +75,7 @@
                 </div>
             </div>
         </b-modal> -->
-<!-- 
+        <!-- 
         <b-modal ref="text2sign" title="Type Signature" hide-footer static lazy>
             <div class="card">
                 <div style="border: 2px solid #8080804f; margin: 10px; border-radius: 10px;">
@@ -109,7 +109,7 @@
 
         <div class="input-group-append">
 
-<!-- 
+            <!-- 
             <button class="btn btn-outline-secondary" v-if="tempSignature === null" @click="openSignatureText()"><b-icon
                     icon="vector-pen"></b-icon>
                 Create Signature</button> -->
@@ -212,18 +212,17 @@ export default {
         }
     },
     async mounted() {
-        this.getSignatureImage(this.textData)
+
         this.$on('imageLoaded', (img) => {
             localStorage.setItem('tempSignature', img)
             this.createKeyPairWithData(img)
         })
-
-       
-
         const data = localStorage.getItem('tempSignature')
-        if (data !== '' || data !== null) {
+        if (data !== null) {
             this.createKeyPairWithData(data)
 
+        } else {
+            this.getSignatureImage(this.textData)
         }
 
         if (!this.$v.$invalid) {
@@ -362,7 +361,7 @@ export default {
             const { data } = this.$refs.signaturePad.saveSignature();
             if (data == undefined) {
                 this.notifyErr("No Signature is created")
-                return 
+                return
             }
             const image = new Image()
             image.src = data
@@ -499,18 +498,24 @@ hr.hr-text::before {
     transform: translate(-50%, -50%);
 }
 
-a{
+a {
     text-decoration: none !important;
-    
-}
-.card-footer , .card{
-    text-decoration: none !important;
-}
-.tabs,.card,.card-header,.nav, .active{
-    background-color: white !important;
-}
-.card{
-    scroll-behavior: unset;
+
 }
 
-</style>
+.card-footer,
+.card {
+    text-decoration: none !important;
+}
+
+.tabs,
+.card,
+.card-header,
+.nav,
+.active {
+    background-color: white !important;
+}
+
+.card {
+    scroll-behavior: unset;
+}</style>
