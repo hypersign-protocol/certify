@@ -355,7 +355,6 @@ export default {
         format: "png",
         quality: 1,
       });
-      console.log(signaturePage);
       this.setPDFDoc({
         pdfDoc: this.pdfDoc,
         signature: signaturePage,

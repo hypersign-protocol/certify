@@ -5,7 +5,11 @@ module.exports = defineConfig({
   transpileDependencies: true,
   publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
   configureWebpack: {
-    plugins: [new NodePolyfillPlugin()],
+    plugins: [new NodePolyfillPlugin(
+      {
+        includeAliases:['crypto','Buffer','stream']
+      }
+    )],
     optimization: {
       splitChunks: {
         chunks: "all",

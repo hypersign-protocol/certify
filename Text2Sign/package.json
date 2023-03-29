@@ -1,0 +1,21 @@
+{
+  "name": "Text2Sign",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf dist && tsc -p ."
+  },
+  "keywords": [],
+  "author": "Hypersign",
+  "license": "ISC",
+  "dependencies": {
+    "rimraf": "^4.4.1",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.5"
+  }
+}
